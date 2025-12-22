@@ -5,7 +5,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+require('dotenv').config();
+
 
 // Import Routes
 const authRoutes = require('./routes/auth');
@@ -61,10 +62,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// ---------------------------
-// Serve Frontend Static Files
-// ---------------------------
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
 
 // ---------------------------
 // Serve Backend Public Files
@@ -92,50 +90,21 @@ app.use('/api', (req, res) => {
   });
 });
 
-// ---------------------------
-// HTML Page Routes
-// ---------------------------
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
-});
-
-app.get('/admin.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'admin.html'));
-});
-
-app.get('/my-orders.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'my-orders.html'));
-});
-
-app.get('/product-details.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'product-details.html'));
-});
-
-app.get('/contact.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'contact.html'));
-});
-
-app.get('/terms-conditions.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'terms-conditions.html'));
-});
-
-app.get('/privacy-policy.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'privacy-policy.html'));
-});
-
-app.get('/refund-and-returns-policy.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'refund-and-returns-policy.html'));
-});
-
-app.get('/payment-success', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'payment-success.html'));
-});
 
 
 // ---------------------------
 // Error Handling Middleware
 // ---------------------------
 app.use(errorHandler);
+
+
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'ZionBazaar Backend API is running 🚀'
+  });
+});
+
 
 // ---------------------------
 // Start Server

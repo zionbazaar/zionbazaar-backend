@@ -6,30 +6,12 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 require('dotenv').config();
-
-
-// Import Routes
-const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/products');
-const cartRoutes = require('./routes/cart');
-const orderRoutes = require('./routes/orders');
-const adminRoutes = require('./routes/admin'); // New admin routes
-const paymentRoutes = require('./routes/payment');
-const uploadRoutes = require('./routes/upload');
-const wishlistRoutes = require('./routes/wishlist'); // New wishlist routes
-const couponRoutes = require('./routes/coupon'); // New coupon routes
-const chatbotRoutes = require('./routes/chatbot'); // Chatbot routes
-
-// Import DB Connection
-const connectDB = require('./config/db');
-
 const configureCloudinary = require('./config/cloudinary');
 
-// Import Error Handler
-const errorHandler = require('./middleware/errorHandler');
-
-// Configure Cloudinary
+// Configure Cloudinary immediately
 configureCloudinary();
+
+// Import Routes
 
 // Connect to Database
 connectDB();

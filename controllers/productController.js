@@ -11,7 +11,14 @@ exports.getProducts = async (req, res, next) => {
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
-    if (search) query.$text = { $search: search };
+    if (search) {
+        query.$or = [
+            { name: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } },
+            { category: { $regex: search, $options: 'i' } },
+            { tags: { $regex: search, $options: 'i' } }
+        ];
+    }
     const skip = (page - 1) * limit;
     let sortOption = {};
     if (sort === 'price_asc') sortOption.price = 1;

@@ -3,7 +3,15 @@ const errorHandler = (err, req, res, next) => {
   error.message = err.message;
 
   // Log error for debugging
-  console.error(err);
+  console.error('ERROR:', err);
+  if (err.code) console.error('ERROR CODE:', err.code);
+  if (err.field) console.error('ERROR FIELD:', err.field);
+
+  // Multer error
+  if (err.name === 'MulterError') {
+    const message = `Multer Error: ${err.message}${err.field ? ' at field ' + err.field : ''}`;
+    error = { message, statusCode: 400 };
+  }
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {

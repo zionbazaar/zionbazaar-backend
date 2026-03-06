@@ -4,7 +4,16 @@ const Product = require('../models/Product');
 exports.getCart = async (req, res, next) => {
   try {
     let cart = await Cart.findOne({ user: req.user.id }).populate('items.product', 'name price images stock');
-    if (!cart) cart = await Cart.create({ user: req.user.id, items: [] });
+    if (!cart) {
+        cart = await Cart.create({ user: req.user.id, items: [] });
+    } else {
+        const originalItemCount = cart.items.length;
+        cart.items = cart.items.filter(item => item.product !== null);
+        if (cart.items.length < originalItemCount) {
+            cart.totalAmount = cart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+            await cart.save();
+        }
+    }
     res.json({ success: true, cart });
   } catch (error) {
     next(error);

@@ -16,6 +16,9 @@ const orderRoutes = require('./routes/orders');
 const adminRoutes = require('./routes/admin'); // New admin routes
 const paymentRoutes = require('./routes/payment');
 const uploadRoutes = require('./routes/upload');
+const wishlistRoutes = require('./routes/wishlist'); // New wishlist routes
+const couponRoutes = require('./routes/coupon'); // New coupon routes
+const chatbotRoutes = require('./routes/chatbot'); // Chatbot routes
 
 // Import DB Connection
 const connectDB = require('./config/db');
@@ -46,6 +49,12 @@ app.use(cors());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
+  message: {
+    success: false,
+    message: "Too many requests from this IP, please try again after 15 minutes"
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use('/api', limiter);
 
@@ -79,6 +88,9 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes); // Register new admin routes
 app.use('/api/payment', paymentRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/wishlist', wishlistRoutes); // Register new wishlist routes
+app.use('/api/coupons', couponRoutes); // Register new coupon routes
+app.use('/api/chatbot', chatbotRoutes); // Register chatbot routes
 
 // ---------------------------
 // 404 for API Routes
@@ -104,6 +116,7 @@ app.get('/', (req, res) => {
     message: 'ZionBazaar Backend API is running 🚀'
   });
 });
+
 
 
 // ---------------------------

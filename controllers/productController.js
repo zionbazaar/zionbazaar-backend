@@ -4,7 +4,13 @@ exports.getProducts = async (req, res, next) => {
   try {
     const { category, minPrice, maxPrice, search, sort, isFeatured, page = 1, limit = 12 } = req.query;
     let query = { isActive: true };
-    if (category) query.category = category;
+    // Escape regex special characters helper
+    const escapeRegex = (string) => string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+    if (category) {
+        query.category = { $regex: escapeRegex(category), $options: 'i' };
+    }
+
     if (isFeatured) query.isFeatured = true;
     if (minPrice || maxPrice) {
       query.price = {};
@@ -12,12 +18,23 @@ exports.getProducts = async (req, res, next) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
     if (search) {
-        query.$or = [
-            { name: { $regex: search, $options: 'i' } },
-            { description: { $regex: search, $options: 'i' } },
-            { category: { $regex: search, $options: 'i' } },
-            { tags: { $regex: search, $options: 'i' } }
-        ];
+        const escapedSearch = escapeRegex(search);
+        const searchWords = escapedSearch.split(/\s+/).filter(word => word.length > 0);
+        
+        // Match ALL words in the search query across fields
+        const searchConditions = searchWords.map(word => ({
+            $or: [
+                { name: { $regex: word, $options: 'i' } },
+                { description: { $regex: word, $options: 'i' } },
+                { category: { $regex: word, $options: 'i' } },
+                { tags: { $regex: word, $options: 'i' } }
+            ]
+        }));
+
+        if (searchConditions.length > 0) {
+            query.$and = query.$and || [];
+            query.$and.push(...searchConditions);
+        }
     }
     const skip = (page - 1) * limit;
     let sortOption = {};
